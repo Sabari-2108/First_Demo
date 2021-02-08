@@ -1,0 +1,7 @@
+Open Google Chrome.
+Launch the URL.
+And Enter the Username and Password.
+Click the Login Button
+It will allow and show you the dashboard page of the Application.
+Click Logout Button
+And Close the Chrome Browser.
