@@ -5,4 +5,3 @@ Click the Login Button
 It will allow and show you the dashboard page of the Application.
 Click Logout Button
 And Close the Chrome Browser.
-That's all folks!!!
