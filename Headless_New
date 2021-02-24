@@ -1,0 +1,239 @@
+using System;
+using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using ClassLibrary7.reports;
+using System.IO;
+using System.Text.RegularExpressions;
+
+namespace Alert
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        IWebDriver driver;
+        WebDriverWait wait;
+
+        public class GlobalVariables
+        {
+            public static int countOfTestMethods = 0, tot = countOfTestMethods, passed = 0, faild = 0, totalsteps, r = 0;
+            public static dynamicemailtemplate dct = new ClassLibrary7.reports.dynamicemailtemplate();
+            public static string prjpath, name, methodname, Filename, link, TC = "0", PC = "0", FC = "0";
+        }
+
+        string Text;
+        int count, count1, count2, i = 0;
+        string Scenario = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+        string outPutDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        string totalcalc = (Directory.GetParent(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).Parent.Parent.FullName + ("\\" + (System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "\\UnitTest1.cs")));
+        public string url = "http://192.169.1.147/Shricity4.5/";
+        string prjname, nagvpath;
+        string appname = "Samil_B2C";
+        public string Calculator_Type;
+
+        private TestContext testContextInstance;
+        public TestContext TestContext
+        {
+            get { return testContextInstance; }
+            set { testContextInstance = value; }
+        }
+        public int g, rows;
+
+        public void methodnamefiningfunction(string mname)
+        {
+            GlobalVariables.methodname = mname;
+            i = i + 1;
+        }
+        public void Start()
+        {
+            GlobalVariables.dct.starttimefunction();
+            GlobalVariables.dct.CountNumberOfTestMethods(ref GlobalVariables.countOfTestMethods, ref GlobalVariables.prjpath);
+        }
+        public void End()
+        {
+            GlobalVariables.dct.callingcommanmethod(GlobalVariables.name, GlobalVariables.methodname);
+            GlobalVariables.dct.endtimefunction(ref GlobalVariables.passed, ref GlobalVariables.faild, ref GlobalVariables.countOfTestMethods);
+            GlobalVariables.dct.excelclosefunction();
+        }
+
+        [DataSource("System.Data.Odbc", "Dsn=Excel Files;Driver={Microsoft Excel Driver (*.xls)};dbq=C:\\Users\\s2142\\Desktop\\Alert.xlsx;defaultdir=.;driverid=790;maxbuffersize=2048;pagetimeout=5", "Sheet1$", DataAccessMethod.Sequential)]
+        
+        [TestMethod]
+        public void TestMethod1()
+        {
+            string g1 = TestContext.DataRow["Temp"].ToString();
+            int g = Convert.ToInt16(g1);
+
+            //For calculating Total Steps
+            Text = File.ReadAllText(totalcalc);
+            count1 = Regex.Matches(Text, "//methodnamefiningfunction").Count - 1;
+            count2 = Regex.Matches(Text, "//                methodnamefiningfunction").Count - 1;
+            count = Regex.Matches(Text, "methodnamefiningfunction").Count - 4;
+            GlobalVariables.totalsteps = count - count1 - count2;
+
+            string datafile = this.TestContext.DataConnection.Database;
+            prjname = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+
+            GlobalVariables.dct.totaldatacount(ref GlobalVariables.r, ref datafile);
+
+            //To obtain the start time for one iteration
+            GlobalVariables.dct.starttime_method();
+
+            //---------------| Data Part |---------------//
+            
+            string Sno = TestContext.DataRow["Sno"].ToString();
+            string Expected_Status = TestContext.DataRow["ExpectedStatus"].ToString();
+            string TestCase_ID = TestContext.DataRow["Test Case ID"].ToString();
+            string Testcase_Description = TestContext.DataRow["Test Case Description"].ToString();
+
+            //-------------------------------------------//
+
+            GlobalVariables.passed = 0;
+            GlobalVariables.faild = 0;
+            GlobalVariables.countOfTestMethods = 0;
+
+            GlobalVariables.name = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + DateTime.Now.ToString("ddMMyy_hhmmss");
+            GlobalVariables.Filename = AppDomain.CurrentDomain.BaseDirectory + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".xlsx";
+            GlobalVariables.prjpath = AppDomain.CurrentDomain.BaseDirectory + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".dll";
+            GlobalVariables.dct.CreateExcel(ref GlobalVariables.Filename, ref g1, ref GlobalVariables.r);
+
+            //-------------------------------------------//
+
+            try
+            {
+                Start();
+                methodnamefiningfunction("Launching the URL");
+                ChromeOptions option = new ChromeOptions();
+                option.AddArgument("--start-maximized");
+                option.AddExcludedArgument("enable-automation");
+                //option.AddArgument("--headless");
+                //option.AddArgument("--window-size=1920,1080");
+                driver = new ChromeDriver(option);
+                driver.Url = "http://192.169.1.223/oasysg/home";
+                wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
+                End();
+
+                //Clicking the Register Now Button
+                Start();
+                methodnamefiningfunction("Clicking the Register Now Button");
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.ClassName("registernow-text")));
+                driver.FindElement(By.ClassName("registernow-text")).Click();
+                End();
+
+                //Clicking the Verify Button
+                Start();
+                methodnamefiningfunction("Clicking the Verify Button");
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id("btnVerify")));
+                driver.FindElement(By.Id("btnVerify")).Click();
+                if (g == 2)
+                {
+                    throw new Exception();
+                }
+                End();
+
+                //Handling the Alert
+                Start();
+                methodnamefiningfunction("Handling the Alert");
+                alertReplacer("header", "pass");
+                End();
+
+                Screenshot();
+
+                Start();
+                methodnamefiningfunction("Quiting the Browser");
+                Thread.Sleep(500);
+                driver.Quit();
+                End();
+
+                GlobalVariables.dct.endtime_method();
+                GlobalVariables.dct.linkforbackscreen();
+                GlobalVariables.dct.overallstatus_pass(ref GlobalVariables.r, g, ref GlobalVariables.link, Expected_Status, TestCase_ID, Sno, Testcase_Description);
+                GlobalVariables.dct.excelclosefunction();
+            }
+            catch (Exception error)
+            {
+                alertReplacer("header", "fail");
+                Screenshot();
+             
+                StreamWriter objWriter = default(StreamWriter);
+                string filename = "\\\\192.169.1.55\\Automation reports\\MySamil_Mobile\\Exception_Reports\\ISSUE" + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + g + ".txt";
+                Console.WriteLine(error.Message);
+                if ((!Directory.Exists(filename)))
+                {
+                    objWriter = File.CreateText(filename);
+                    objWriter.WriteLine(error.ToString());
+                    objWriter.Close();
+                }
+
+                GlobalVariables.dct.callingcommanmethod(GlobalVariables.name, GlobalVariables.methodname);
+                GlobalVariables.dct.endtimefunction1(ref GlobalVariables.link, ref GlobalVariables.faild, ref GlobalVariables.countOfTestMethods, ref GlobalVariables.passed, ref g1, ref GlobalVariables.r);
+                GlobalVariables.dct.endtime_method();
+                GlobalVariables.dct.overallstatus_fail(ref GlobalVariables.r, g, ref GlobalVariables.link, Expected_Status, TestCase_ID, Sno, Testcase_Description);
+                GlobalVariables.dct.excelclosefunction();
+
+                if (g == (GlobalVariables.r - 1))
+                {
+                    driver.Quit();
+                }
+            }
+
+            string[] ary = new string[2];
+            ary = new string[] { "sabari.dv@novactech.in" };
+            string[] ary1 = new string[9];
+            ary1 = new string[] { };
+            string[] ary2 = new string[3];
+            ary2 = new string[] { };
+
+            GlobalVariables.dct.reportcalculation(ref GlobalVariables.totalsteps, GlobalVariables.r, ref GlobalVariables.countOfTestMethods, ref GlobalVariables.passed, ref GlobalVariables.faild);
+            int rr = GlobalVariables.r - 1;
+
+            if (g == (GlobalVariables.r - 1))
+            {
+                GlobalVariables.dct.mail(appname, url, GlobalVariables.totalsteps, ref prjname, ref nagvpath, ref GlobalVariables.Filename, ref GlobalVariables.r, ref GlobalVariables.faild, ref GlobalVariables.countOfTestMethods, ref GlobalVariables.passed, ary, ary1, ary2);
+            }
+
+            GC.Collect();
+        }
+
+        public void Screenshot()
+        {
+            GlobalVariables.link = @"\\192.169.1.55\Automation reports\Sabari\Web Screenshots\Sample - " + DateTime.Now.ToString("yyyy-MM-dd_HHmmss") + ".png";
+            ITakesScreenshot sc = (ITakesScreenshot)driver;
+            sc.GetScreenshot().SaveAsFile(GlobalVariables.link, ScreenshotImageFormat.Png);
+        }
+
+        public void alertReplacer(string ID_Value, string Pass_Fail)
+        {
+            string[] URL = url.Split('/');
+            string URL_Path = URL[3].Trim();
+
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.AlertIsPresent());
+            IAlert alert = driver.SwitchTo().Alert();
+            string alertText = alert.Text;
+            alert.Accept();
+
+            string color = "";
+
+            if (Pass_Fail.ToLower().Contains("p")) color = "green";
+            else if (Pass_Fail.ToLower().Contains("f")) color = "red";
+
+            if (Pass_Fail.ToLower().Contains("p") || Pass_Fail.ToLower().Contains("f"))
+            {
+                Thread.Sleep(1000);
+                string script = "var p = document.createElement('div');var ele = document.getElementById('" + ID_Value + "');p.setAttribute('style', 'width: 250px !important; height: 120px !important; padding: 10px !important; margin: auto;color: #000000; font-weight: bold; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); border: 2px outset "+ color + "; background - color: #FFCCCB');p.setAttribute('id', 'automation');ele.prepend(p);";
+                ((IJavaScriptExecutor)driver).ExecuteScript(script);
+                string script_ = "var child = document.getElementById('automation').appendChild(document.createElement('h2')); child.setAttribute('id', 'child_h1'); child.innerHTML += '"+ URL_Path + " says';";
+                ((IJavaScriptExecutor)driver).ExecuteScript(script_);
+                string script__ = "var child = document.getElementById('automation').appendChild(document.createElement('p')); child.setAttribute('id', 'child_p'); child.innerHTML += '<br><br> " + alertText + "'; child.setAttribute('style', 'width: 250px !important; height: 120px !important; word-wrap: break-word;');";
+                ((IJavaScriptExecutor)driver).ExecuteScript(script__);
+            }
+
+            Thread.Sleep(1000);
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+            Thread.Sleep(1000);
+            js.ExecuteScript("window.scrollBy(0, -10000);");
+        }
+    }
+}
